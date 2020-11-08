@@ -1,2 +1,2 @@
 # highlights-getter
-Python script (or server maybe eventually) to get my kindle highlights. 
+Nvm this gonna be a javascript bookmarklet lmao
