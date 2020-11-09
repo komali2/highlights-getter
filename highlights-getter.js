@@ -1,7 +1,12 @@
 const highlights = [];
-const ASINs = new Set();
+const ASINs = [];
+
+const BASE_URL = 'https://read.amazon.com/kp/notebook';
 
 
+function generateASINUrl(ASIN) {
+  return `${BASE_URL}?asin=${ASIN}&contentLimitState=&`;
+}
 
 function scrapePage() {
   document.querySelectorAll('#highlight').forEach((el) => {
@@ -15,6 +20,39 @@ function scrapePage() {
 
 function getAllASIN() {
   document.querySelectorAll('[data-get-annotations-for-asin]').forEach((el) => {
-    ASINs.add(JSON.parse(el.dataset.getAnnotationsForAsin).asin);
+    ASINs.push(JSON.parse(el.dataset.getAnnotationsForAsin).asin);
   });
 };
+
+function createHtmlDocument(htmlString) {
+  const htmlElem = document.createElement('html');
+  htmlElem.innerHTML = htmlString;
+  return htmlElem;
+}
+
+function getResponseForBook(ASIN) {
+  return fetch(generateASINUrl(ASIN), { mode: 'no-cors' });
+}
+
+function getPageForResponse(response) {
+  return response.text();
+}
+
+async function getResponses() {
+  return await Promise.all(ASINs.map(async (ASIN) => {
+    return await getResponseForBook(ASIN);
+  }));
+}
+
+async function getPages(responses) {
+  console.log(responses);
+  return await Promise.all(responses.map(async (response) => {
+    return await getPageForResponse(response);
+  }));
+}
+
+async function main() {
+  getAllASIN();
+  const pages = await getPages( await getResponses(ASINs));
+  console.log(pages);
+}
