@@ -8,12 +8,12 @@ function generateASINUrl(ASIN) {
   return `${BASE_URL}?asin=${ASIN}&contentLimitState=&`;
 }
 
-function scrapePage() {
-  document.querySelectorAll('#highlight').forEach((el) => {
+function scrapePage(virtualDocument) {
+  virtualDocument.querySelectorAll('#highlight').forEach((el) => {
     const metadata = el.closest('.a-spacing-base').querySelector('#annotationNoteHeader').innerText;
     const highlightText = el.innerText;
-    const title = document.querySelector('h3.kp-notebook-metadata').textContent;
-    const author = document.querySelector('p.kp-notebook-metadata.a-spacing-none').textContent;
+    const title = virtualDocument.querySelector('h3.kp-notebook-metadata').textContent;
+    const author = virtualDocument.querySelector('p.kp-notebook-metadata.a-spacing-none').textContent;
     highlights.push({ metadata, highlightText, title, author });
   });
 };
@@ -29,6 +29,7 @@ function createHtmlDocument(htmlString) {
   htmlElem.innerHTML = htmlString;
   return htmlElem;
 }
+
 
 function getResponseForBook(ASIN) {
   return fetch(generateASINUrl(ASIN), { mode: 'no-cors' });
@@ -51,8 +52,10 @@ async function getPages(responses) {
   }));
 }
 
+
 async function main() {
   getAllASIN();
   const pages = await getPages( await getResponses(ASINs));
-  console.log(pages);
+  const virtualDocuments = pages.map(createHtmlDocument);
+  virtualDocuments.forEach(scrapePage);
 }
