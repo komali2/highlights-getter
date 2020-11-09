@@ -1,3 +1,5 @@
+(function(){
+
 const highlights = [];
 const ASINs = [];
 
@@ -52,10 +54,17 @@ async function getPages(responses) {
   }));
 }
 
+function copyToClipboard(str) {
+  navigator.clipboard.writeText(str);
+}
 
 async function main() {
   getAllASIN();
   const pages = await getPages( await getResponses(ASINs));
   const virtualDocuments = pages.map(createHtmlDocument);
   virtualDocuments.forEach(scrapePage);
+  copyToClipboard(JSON.stringify(highlights));
+  alert('done! content is in your clipboard.');
 }
+  main();
+})();
