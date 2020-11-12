@@ -40,15 +40,15 @@ function getPageForResponse(response) {
   return response.text();
 }
 
-async function getResponses() {
-  return await Promise.all(ASINs.map(async (ASIN) => {
-    return await getResponseForBook(ASIN);
+function getResponses() {
+  return Promise.all(ASINs.map(async (ASIN) => {
+    return getResponseForBook(ASIN);
   }));
 }
 
-async function getPages(responses) {
-  return await Promise.all(responses.map(async (response) => {
-    return await getPageForResponse(response);
+function getPages(responses) {
+  return Promise.all(responses.map(async (response) => {
+    return getPageForResponse(response);
   }));
 }
 
