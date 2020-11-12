@@ -32,7 +32,6 @@ function createHtmlDocument(htmlString) {
   return htmlElem;
 }
 
-
 function getResponseForBook(ASIN) {
   return fetch(generateASINUrl(ASIN), { mode: 'no-cors' });
 }
@@ -48,7 +47,6 @@ async function getResponses() {
 }
 
 async function getPages(responses) {
-  console.log(responses);
   return await Promise.all(responses.map(async (response) => {
     return await getPageForResponse(response);
   }));
